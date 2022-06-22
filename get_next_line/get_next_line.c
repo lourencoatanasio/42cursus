@@ -6,7 +6,7 @@
 /*   By: ldiogo <ldiogo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/12 16:55:52 by ldiogo            #+#    #+#             */
-/*   Updated: 2022/06/02 16:31:02 by ldiogo           ###   ########.fr       */
+/*   Updated: 2022/06/22 17:16:48 by ldiogo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,42 +17,61 @@ char	*get_next_line(int fd)
 	static char *line;
 	char *str;
 	int i;
+	int n;
 	char *rtn;
-	char *rtnf;
+	char *cpy;
+	char *buffer;
 	
+	n = 0;
 	i = 1;	
 	if (!line)
 	{
 		line = malloc(sizeof (char) * 1);
 		line[0] = '\0';
 	}
+	//printf("line = %s\n---------------\n", line);	
 	str = malloc(sizeof (char) * BUFFER_SIZE + 1);
-	while (!(ft_strchr(str, '\n')) && i)
-	{
-		i = read (fd, str, BUFFER_SIZE);
-		str[i + 1] = '\0';
-		rtn = line;
-		line = ft_strjoin(rtn, str);
-		//printf("===========\n%s\n", line);
-	}
-	line = ft_strchrplus(line, '\n');
-	rtnf = ft_strndup (rtn);
-	//printf("\n%s\n===============\n", rtnf);
+	while (!(ft_strchr(line, '\n')) && i)
+	{	
+		cpy = line;
+		i = read (fd, buffer, BUFFER_SIZE);
+		buffer[i] = '\0';
+		printf("buffer = %s\n---------------\n", buffer);
+		line = ft_strjoin(cpy, buffer);
+		//free(cpy);
+		//printf("%s\n", line);
+	}	
+	free(str);
 	//printf("\nline = %s\n---------------\n", line);
-	free (str);
-	return (rtnf);
+//	rtn = malloc(sizeof (char) * (ft_strlen(line) + 1));
+	printf("line1 = %s\n---------------\n", line);
+	rtn = ft_strndup(line);
+	printf("rtn = %s\n---------------\n", rtn);
+	//printf("antes strchr = %s\n---------------\n", line);	
+	line = ft_exstrchr(line);
+	//printf("line = %s\n---------------\n", line);	
+	//rtn = line;
+	//line = ft_strchrplus(line, '\n');
+	//rtnf = ft_strndup (rtn);
+	//printf("ft_trim = %s\n===============\n", ft_trim(rtn));
+	//printf("n = %i\n---------------\n", n);	
+	return (rtn);
 }
 
-/*int main()
+int main()
 {
 	int fd;
-
-	fd = open ("file.txt", O_RDWR);
-	get_next_line(fd);
-	get_next_line(fd);
-	//get_next_line(fd);
-	//get_next_line(fd);
-	//get_next_line(fd);			
-	//system("leaks a.out");
-}*/
+	char *fds;
+	fd = open ("42_no_nl", O_RDWR);
+	fds = get_next_line(fd);
+	printf("1 gnl\n");
+	for(int i = 0; i < 6; i++)
+	{
+		free(fds);
+		fds = get_next_line(fd);	
+		printf("1 gnl\n");	
+	}
+	//printf("%s\n", fds);
+	system("leaks a.out");
+}
 
